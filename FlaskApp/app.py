@@ -1,12 +1,10 @@
-from flask import Flask,make_response,request,render_template,abort,Response
-from urllib import urlopen
-import json
-app=Flask(__name__)
+from src import app
+from flask import Flask,make_response,request,render_template,abort,Response,jsonify
+import requests
 
 @app.route('/')
 def index():
   return 'hello johnson'
-
 
 @app.route('/setcookie')
 def setcookie():
@@ -36,30 +34,11 @@ def input():
         return 'hello '+name
     return render_template('form.html')
 
-
-@app.route('/authors')
+@app.route('/authors',methods=['GET'])
 def authors():
-
-    def inner():
-         count=0
-         url1 = urlopen('https://jsonplaceholder.typicode.com/users').read()
-         authors = json.loads(url1)
-         url2 = urlopen('https://jsonplaceholder.typicode.com/posts').read()
-         posts = json.loads(url2)
-         yield '<h3>Author  ||  Count</h3>'
-         for x in range(len(authors)):
-            id1=authors[x]['id']
-            name=authors[x]['name']
-            count=0
-            for y in range(len(posts)):
-               id2=posts[y]['userId']
-               if id1==id2:
-                 count+=1
-
-            yield'\t%s\t'%name
-            yield '->%s<br/>\n' %count
-    return Response(inner(), mimetype='text/html')
-
-
-if __name__=='__main__':
-  app.run()
+    data = requests.get('https://jsonplaceholder.typicode.com/users').json()
+    posts = requests.get('https://jsonplaceholder.typicode.com/posts').json()
+    users = {d['id']:{'name':d['name'],'count':0} for d in data}
+    for post in posts:
+        users[post['userId']]['count']+=1
+    return render_template('authors.html',users=users)
