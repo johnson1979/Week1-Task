@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Author-list</title>
+    <link rel="stylesheet" href="static/css/authors.css">
+  </head>
+  <body>
+    <table>
+        <tr>
+          <th align="left">Name</th>
+          <th>Count</th>
+        </tr>
+    {% for id in users %}
+          <tr>
+            <td align="left">{{users[id]['name']}}</td>
+            <td align="right">{{users[id]['count']}}</td>
+          </tr>
+    {% endfor%}
+    </table>
+	<br>
+
+  </body>
+</html>
